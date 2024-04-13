@@ -26,7 +26,6 @@ class _RegisterView extends StatelessWidget {
         
         child: SingleChildScrollView(
           child: Column(
-            
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               FlutterLogo(size:500),//AQUI PONDRIAMOS EL QUERY DEL CONTEXT PARA EL TAMAÑO
@@ -35,7 +34,6 @@ class _RegisterView extends StatelessWidget {
                 height: 20,
               ),
 
-              
               SizedBox(
                 height: 20,
               ),
