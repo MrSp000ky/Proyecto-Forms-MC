@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutterforms/presentation/helper/validadores.dart';
+import 'package:flutterforms/presentation/register/register_cubit.dart';
 import 'package:flutterforms/presentation/widgets/input/custom_text_form_field.dart';
 
 class RegisterForm extends StatefulWidget {
@@ -9,57 +12,42 @@ class RegisterForm extends StatefulWidget {
 }
 
 
-class _RegisterFormState extends State<RegisterForm> {
+class _RegisterFormState extends State<RegisterForm> with Validadores {
+
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
+  
   String userName = '';
   String email = '';
   String password = '';
 
   @override
   Widget build(BuildContext context) {
+    final RegisterCubit registerCubit = context.watch<RegisterCubit>();
     return Form(
       key: _formKey,
       child: Column(
       children: [
       CustomTextFormField(
         label:'Nombre de Usuario',
-        onChanged: (value) => userName = value,
-        validador: (value) {
-          if (value ==null || value.trim().isEmpty) return 'Campo Requerido';
-
-          return null;
-            
-        },
+        onChanged: (value) => userNameOnChange(value: value,registerCubit: registerCubit),
+        validador: (value) => userNameValidator(value),
       ),
       const SizedBox(
         height: 20,
       ),
       CustomTextFormField(
         label:'Correo Electronico',
-        onChanged: (value) => email = value,
-        validador: (value) {
-          if (value ==null || value.trim().isEmpty) return 'Campo Requerido';
-          final emailRegExp = RegExp(
-                r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
-              );
-
-          if (!emailRegExp.hasMatch(value)) return 'No tiene el formato Requerido';
-
-          return null;
-            
-        },
+        onChanged: (value) => emailOnChange(value: value,registerCubit: registerCubit),
+        validador: (value) => emailValidator(value),
       ),
       const SizedBox(
         height: 20,
       ),
        CustomTextFormField(
         label:'Contraseña',
-        onChanged: (value) => password = value,
-        validador: (value) {
-          if (value ==null || value.trim().isEmpty) return 'Campo Requerido';
-          return null; 
-        },
+        onChanged: (value) => passswordOnChange(value: value,registerCubit: registerCubit),
+        validador: (value) => passWordValidator(value),
         obscureTest: true,
        ),
       const SizedBox(
@@ -68,7 +56,9 @@ class _RegisterFormState extends State<RegisterForm> {
       FilledButton.tonalIcon(
                 onPressed:(){
                   final isValid = _formKey.currentState!.validate();
-                  if (!isValid) return;
+                  if (!isValid) {
+                    registerCubit.onSubmit();
+                  }
                     
                 }, 
                 icon: const Icon(Icons.save),
@@ -76,4 +66,22 @@ class _RegisterFormState extends State<RegisterForm> {
 
     ],));
   }
+
+
+  userNameOnChange({String value = "", required RegisterCubit registerCubit}) {
+          registerCubit.userNameChanged(value);
+          _formKey.currentState?.validate();
+        }
+
+  emailOnChange({String value = "", required RegisterCubit registerCubit}) {
+          registerCubit.emailChanged(value);
+          _formKey.currentState?.validate();
+        }
+
+  passswordOnChange({String value = "", required RegisterCubit registerCubit}) {
+          registerCubit.passwordChanged(value);
+          _formKey.currentState?.validate();
+        }
+
+
 }
